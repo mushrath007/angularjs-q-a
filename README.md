@@ -1415,7 +1415,7 @@ function userDetails(username) {
 
     **[⬆ Back to Top](#table-of-contents)**
 
-25. ### What is Hoisting?
+25. ### What is Hoisting? --> assign values first and declare later. Can be avoided using 'use strict';
     Hoisting is a JavaScript mechanism where variables and function declarations are moved to the top of their scope before code execution. Remember that JavaScript only hoists declarations, not initialisation.
     Let's take a simple example of variable hoisting,
     ```javascript
@@ -1479,6 +1479,7 @@ function userDetails(username) {
     ```
     As per the above code, the inner function(greetingInfo) has access to the variables in the outer function scope(Welcome) even after outer function has returned.
 
+Side effect of Closure - (reference to the outer scope is stored -> causing issues while looping) IIFE(can be written for side effect of closure)
     **[⬆ Back to Top](#table-of-contents)**
 
 28. ### What are modules?
@@ -6000,10 +6001,15 @@ function userDetails(username) {
      **[⬆ Back to Top](#table-of-contents)**
 
 
+Immutable:
+An immutable object is an object whose state cannot be modified after it is created. Examples of native JavaScript values that are immutable are numbers and strings. Examples of native JavaScript values that are mutable include objects, arrays, functions, classes, sets, and maps.
 
+Avoid From cross scripting? encodeURI , unescape html or unsafe code blocks
 
-
-
+ES6 - Types of scope
+Global Scope. Any variable that's not inside any function or block (a pair of curly braces), is inside the global scope. The variables in global scope can be accessed from anywhere in the program. ...
+Local Scope or Function Scope. Variables declared inside a function is inside the local scope. ...
+Block Scope.
 
 
 
