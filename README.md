@@ -6012,8 +6012,85 @@ Local Scope or Function Scope. Variables declared inside a function is inside th
 Block Scope.
 
 
+AngularJS optimization tips
+1. Keep an eye on your digest cycle
+2. Limit your watchers
+3. Use one-time binding, if possible
+4. Use scope.$evalAsync
+5. Use Chrome DevTools Profiler and Timeline
+6. Limit DOM access
+7. Disable CSS class and comment directives
+8. Disable debug data
+9. Use Lodash
+10. Use ng-if or ng-switch instead of ng-show
+11. Avoid ng-repeat when possible
+12. Use $watchCollection
+13. Use $cacheFactory
+14. Use console.time
+15. Debounce ng-model
+16. Use $filter
+17. Tight scoping
+18. Pagination or infinite scroll
 
 
+There are four types of scopes:
+
+normal prototypal scope inheritance -- ng-include, ng-switch, ng-controller, directive with scope: true
+normal prototypal scope inheritance with a copy/assignment -- ng-repeat. Each iteration of ng-repeat creates a new child scope, and that new child scope always gets a new property.
+isolate scope -- directive with scope: {...}. This one is not prototypal, but '=', '@', and '&' provide a mechanism to access parent scope properties, via attributes.
+transcluded scope -- directive with transclude: true. This one is also normal prototypal scope inheritance, but it is also a sibling of any isolate scope.
+============================================================================================================================
+@: one-way binding
+=: two-way binding
+&: function binding
+
+========================================
+
+$watch()
+The $scope.watch() function creates a watch of some variable. When you register a watch you pass two functions as parameters to the $watch() function:
+
+A value function
+A listener function
+Here is an example:
+
+$scope.$watch(function() {},
+              function() {}
+             );
+The first function is the value function and the second function is the listener function.
+
+The value function should return the value which is being watched. AngularJS can then check the value returned against the value the watch function returned the last time. That way AngularJS can determine if the value has changed. Here is an example:
+
+$scope.$watch(function(scope) { return scope.data.myVar },
+              function() {}
+             );
+This example valule function returns the $scope variable scope.data.myVar. If the value of this variable changes, a different value will be returned, and AngularJS will call the listener function.
+
+Notice how the value function takes the scope as parameter (without the $ in the name). Via this parameter the value function can access the $scope and its variables. The value function can also watch global variables instead if you need that, but most often you will watch a $scope variable.
+
+The listener function should do whatever it needs to do if the value has changed. Perhaps you need to change the content of another variable, or set the content of an HTML element or something. Here is an example:
+
+$scope.$watch(function(scope) { return scope.data.myVar },
+              function(newValue, oldValue) {
+                  document.getElementById("").innerHTML =
+                      "" + newValue + "";
+              }
+             );
+This example sets the inner HTML of an HTML element to the new value of the variable, embedded in the b element which makes the value bold. Of course you could have done this using the code {{ data.myVar }, but this is just an example of what you can do inside the listener function.
+
+$digest()
+The $scope.$digest() function iterates through all the watches in the $scope object, and its child $scope objects (if it has any). When $digest() iterates over the watches, it calls the value function for each watch. If the value returned by the value function is different than the value it returned the last time it was called, the listener function for that watch is called.
+
+The $digest() function is called whenever AngularJS thinks it is necessary. For instance, after a button click handler has been executed, or after an AJAX call returns (after the done() / fail() callback function has been executed).
+
+You may encounter some corner cases where AngularJS does not call the $digest() function for you. You will usually detect that by noticing that the data bindings do not upate the displayed values. In that case, call $scope.$digest() and it should work. Or, you can perhaps use $scope.$apply() instead which I will explain in the next section.
+
+$apply()
+The $scope.$apply() function takes a function as parameter which is executed, and after that $scope.$digest() is called internally. That makes it easier for you to make sure that all watches are checked, and thus all data bindings refreshed. Here is an $apply() example:
+
+$scope.$apply(function() {
+    $scope.data.myVar = "Another value";
+});
+The function passed to the $apply() function as parameter will change the value of $scope.data.myVar. When the function exits AngularJS will call the $scope.$digest() function so all watches are checked for changes in the watched values.
 
 
 
